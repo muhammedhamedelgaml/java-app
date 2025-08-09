@@ -1,34 +1,35 @@
 node {
-    // Set tools
-    def mvnHome = tool name: 'maven'
-    def jdkHome = tool name: 'jdk'
-    env.PATH = "${jdkHome}/bin:${mvnHome}/bin:${env.PATH}"
+    // Define tools
+    def mvnHome = tool name: 'maven', type: 'maven'
+    def jdkHome = tool name: 'jdk', type: 'jdk'
 
     // Set environment variables
-    def DOCKER_NAME = 'muhammedhamedelgaml'
-    withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]) {
+    env.PATH = "${jdkHome}/bin:${env.PATH}"
+    env.MAVEN_HOME = mvnHome
+    env.JAVA_HOME = jdkHome
+    env.DOCKER_PASS = credentials('dockerhub-pass')
+    env.DOCKER_NAME = 'muhammedhamedelgaml'
 
-        stage("Dependency check") {
-            sh "${mvnHome}/bin/mvn org.owasp:dependency-check-maven:8.4.3:check"
-            dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-        }
+    stage("Dependency check") {
+        sh "${mvnHome}/bin/mvn dependency-check:check"
+        dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+    }
 
-        stage("Build app") {
-            sh "${mvnHome}/bin/mvn clean install"
-        }
+    stage("Build app") {
+        sh "${mvnHome}/bin/mvn package install"
+    }
 
-        stage("Archive app") {
-            archiveArtifacts artifacts: '**/*.jar', followSymlinks: false
-        }
+    stage("Archive app") {
+        archiveArtifacts artifacts: '**/*.jar', followSymlinks: false
+    }
 
-        stage("Docker build") {
-            sh "docker build -t ${DOCKER_NAME}/iti-java:v${env.BUILD_NUMBER} ."
-            sh "docker images"
-        }
+    stage("Docker build") {
+        sh "docker build -t ${env.DOCKER_NAME}/iti-java:v${env.BUILD_NUMBER} ."
+        sh "docker images"
+    }
 
-        stage("Docker push") {
-            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_NAME} --password-stdin"
-            sh "docker push ${DOCKER_NAME}/iti-java:v${env.BUILD_NUMBER}"
-        }
+    stage("Docker push") {
+        sh "echo ${env.DOCKER_PASS} | docker login -u ${env.DOCKER_NAME} --password-stdin"
+        sh "docker push ${env.DOCKER_NAME}/iti-java:v${env.BUILD_NUMBER}"
     }
 }
