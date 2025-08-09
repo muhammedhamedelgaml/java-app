@@ -17,11 +17,13 @@ node {
 
 
 
+    stage("Checkout") {
+        checkout scm
+    }
 
     stage("Build app") {
         sh "${mvnHome}/bin/mvn package install"
     }
-
     stage("Archive app") {
         archiveArtifacts artifacts: '**/*.jar', followSymlinks: false
     }
