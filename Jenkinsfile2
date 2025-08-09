@@ -9,7 +9,7 @@ node {
     withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]) {
 
         stage("Dependency check") {
-            sh "${mvnHome}/bin/mvn  dependency-check:check"
+            sh "${mvnHome}/bin/mvn org.owasp:dependency-check-maven:8.4.3:check"
             dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
         }
 
