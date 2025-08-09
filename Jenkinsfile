@@ -1,68 +1,42 @@
-@Library('libx')_
-
 pipeline{
     agent {
-        label 'agent-0'
+        label "java"
     }
-
     tools{
-        jdk "java-8"
+        maven 'mvn-3-5-4'
+        jdk 'java-11'
     }
-
     environment{
-        DOCKER_USER = credentials('dockerhub-user')
-        DOCKER_PASS = credentials('dockerhub-password')
+        DOCKER_USER = credentials('docker-username')
+        DOCKER_PASS = credentials('docker-password')
     }
-
-    parameters {
-        string defaultValue: '${BUILD_NUMBER}', description: 'Enter the version of the docker image', name: 'VERSION'
-        choice choices: ['true', 'false'], description: 'Skip test', name: 'TEST'
-    }
-
     stages{
-        stage("VM info"){
+        stage("Dependancy check"){
             steps{
-                script{
-                    def VM_IP = vmIp()
-                    sh "echo ${VM_IP}"
-                }
+                sh "mvn dependency-check:check"
             }
         }
-        stage("Build java app"){
+        stage("build app"){
             steps{
-                script{
-                    sayHello "ITI"
-                }
-                sh "mvn clean package install -Dmaven.test.skip=${TEST}"
+                sh "mvn package install"
             }
         }
-        stage("build java app image"){
+        stage("archive app"){
             steps{
-                script{
-                    def dockerx = new org.iti.docker()
-                    dockerx.build("java", "${VERSION}")
-                }
-                sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} "
+                archiveArtifacts artifacts: '**/*.jar', followSymlinks: false
             }
         }
-        stage("push java app image"){
+        stage("docker build"){
             steps{
-                script{
-                    def dockerx = new org.iti.docker()
-                    dockerx.login("${DOCKER_USER}", "${DOCKER_PASS}")
-                    dockerx.push("${DOCKER_USER}", "${DOCKER_PASS}")
-                }
+                sh "docker build -t hassaneid/iti-java:v${BUILD_NUMBER} ."
+                sh "docker images"
             }
         }
-    }
-
-    post{
-        always{
-            sh "echo 'Clean the Workspace'"
-            cleanWs()
-        }
-        failure {
-            sh "echo 'failed'"
-        }
+        // stage("docker push"){
+        //     steps{
+        //         sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
+        //         sh "docker push hassaneid/iti-java:v${BUILD_NUMBER}"
+        //     }
+        // }
     }
 }
