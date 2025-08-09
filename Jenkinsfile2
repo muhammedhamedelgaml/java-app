@@ -15,11 +15,12 @@ node {
      //   dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
     //}
 
-stage("Checkout") {
+stage('Checkout') {
     steps {
-        git url: 'https://github.com/muhammedhamedelgaml/java-app.git', branch: 'master'
+        checkout scm
     }
 }
+
 
 
     stage("Build app") {
