@@ -1,14 +1,12 @@
 pipeline{
-    agent {
-        label "java"
-    }
+    agent any 
     tools{
-        maven 'mvn-3-5-4'
-        jdk 'java-11'
+        maven 'maven'
+        jdk 'jdk'
     }
     environment{
-        DOCKER_USER = credentials('docker-username')
-        DOCKER_PASS = credentials('docker-password')
+        DOCKER_PASS = credentials('dockerhub-pass')
+        DOCKER_NAME = 'muhammedhamedelgaml'
     }
     stages{
         stage("Dependancy check"){
@@ -29,15 +27,15 @@ pipeline{
         }
         stage("docker build"){
             steps{
-                sh "docker build -t hassaneid/iti-java:v${BUILD_NUMBER} ."
+                sh "docker build -t ${DOCKER_NAME}/iti-java:v${BUILD_NUMBER} ."
                 sh "docker images"
             }
         }
-        // stage("docker push"){
-        //     steps{
-        //         sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
-        //         sh "docker push hassaneid/iti-java:v${BUILD_NUMBER}"
-        //     }
-        // }
+        stage("docker push"){
+            steps{
+                sh "docker login -u ${DOCKER_NAME} -p ${DOCKER_PASS}"
+                sh "docker push hassaneid/iti-java:v${BUILD_NUMBER}"
+            }
+        }
     }
 }
