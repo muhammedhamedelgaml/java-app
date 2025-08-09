@@ -14,6 +14,7 @@ pipeline{
         stage("Dependancy check"){
             steps{
                 sh "mvn dependency-check:check"
+                dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
             }
         }
         stage("build app"){
