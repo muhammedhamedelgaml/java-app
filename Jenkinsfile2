@@ -15,11 +15,6 @@ node {
      //   dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
     //}
 
-stage('Checkout') {
-    steps {
-        checkout scm
-    }
-}
 
 
 
