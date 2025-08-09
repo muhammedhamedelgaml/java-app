@@ -1,0 +1,34 @@
+node {
+    // Set tools
+    def mvnHome = tool name: 'maven'
+    def jdkHome = tool name: 'jdk'
+    env.PATH = "${jdkHome}/bin:${mvnHome}/bin:${env.PATH}"
+
+    // Set environment variables
+    def DOCKER_NAME = 'muhammedhamedelgaml'
+    withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]) {
+
+        stage("Dependency check") {
+            sh "${mvnHome}/bin/mvn  dependency-check:check"
+            dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        }
+
+        stage("Build app") {
+            sh "${mvnHome}/bin/mvn clean install"
+        }
+
+        stage("Archive app") {
+            archiveArtifacts artifacts: '**/*.jar', followSymlinks: false
+        }
+
+        stage("Docker build") {
+            sh "docker build -t ${DOCKER_NAME}/iti-java:v${env.BUILD_NUMBER} ."
+            sh "docker images"
+        }
+
+        stage("Docker push") {
+            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_NAME} --password-stdin"
+            sh "docker push ${DOCKER_NAME}/iti-java:v${env.BUILD_NUMBER}"
+        }
+    }
+}
