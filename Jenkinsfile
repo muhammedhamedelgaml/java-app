@@ -33,7 +33,7 @@ pipeline{
         }
         stage("docker push"){
             steps{
-                sh "docker login -u ${DOCKER_NAME} -p ${DOCKER_PASS}"
+                sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_NAME} --password-stdin"
                 sh "docker push hassaneid/iti-java:v${BUILD_NUMBER}"
             }
         }
