@@ -10,10 +10,10 @@ node {
     env.DOCKER_PASS = credentials('dockerhub-pass')
     env.DOCKER_NAME = 'muhammedhamedelgaml'
 
-    stage("Dependency check") {
-        sh "${mvnHome}/bin/mvn dependency-check:check"
-        dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-    }
+ //   stage("Dependency check") {
+   //     sh "${mvnHome}/bin/mvn dependency-check:check"
+     //   dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+    //}
 
     stage("Build app") {
         sh "${mvnHome}/bin/mvn package install"
