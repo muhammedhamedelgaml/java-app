@@ -27,15 +27,21 @@ node {
             def docker = new com.iti.docker()
             docker.build(IMAGE_NAME, IMAGE_TAG)
         }
-        
-stage("Docker Push") {
+
+        stage('Docker login') {
+            steps {
+                dockerPush('muhammedhamedelgaml', ${DOCKER_CRED_ID})
+            }
+        }
+
+  stage() {
     steps {
         script {
             def docker = new com.iti.docker(this)
-            dockerLogin('muhammedhamedelgaml')
             docker.push(IMAGE_NAME, IMAGE_TAG)
         }
     }
+
 }
 
   
