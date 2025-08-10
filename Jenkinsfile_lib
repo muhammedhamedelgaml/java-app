@@ -31,7 +31,7 @@ node {
 stage("Docker Push") {
     steps {
         script {
-            def docker = new com.iti.docker()
+            def docker = new com.iti.docker(this)
             dockerLogin('muhammedhamedelgaml')
             docker.push(IMAGE_NAME, IMAGE_TAG)
         }
