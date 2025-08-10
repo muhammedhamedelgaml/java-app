@@ -1,0 +1,58 @@
+@Library('my-shared-lib') _
+
+  
+pipeline {
+    agent any
+
+    tools {
+        maven 'maven'
+        jdk 'jdk'
+    }
+
+    environment {
+        IMAGE_NAME = 'muhammedhamedelgaml/iti-java'
+        IMAGE_TAG = "v${BUILD_NUMBER}"
+        DOCKER_CRED_ID = 'dockerhub-pass'
+    }
+
+    stages {
+        // stage("Dependency Check") {
+        //     steps {
+        //         sh "mvn dependency-check:check"
+        //         dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        //     }
+        // }
+
+        stage("Build App") {
+            steps {
+
+         def mavenBuild = new org.iti.mvn()
+         mavenBuild.javaBuild("package install")            }
+        }
+
+        stage("Archive App") {
+            steps {
+                archiveArtifacts artifacts: '**/*.jar', followSymlinks: false
+            }
+        }
+
+        stage("Docker Build") {
+            steps {
+                script {
+                  def docker = new com.iti.docker()
+                  docker.build(IMAGE_NAME, IMAGE_TAG)
+                }
+            }
+        }
+
+        stage("Docker Push") {
+            steps {
+                script {
+                  def docker = new com.iti.docker()
+                    docker.login("muhammedhamedelgaml", DOCKER_CRED_ID)
+                    docker.push(IMAGE_NAME, IMAGE_TAG)
+                }
+            }
+        }
+    }
+}
