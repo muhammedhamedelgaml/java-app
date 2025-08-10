@@ -30,7 +30,7 @@ node {
 
         stage('Docker login') {
             steps {
-                dockerPush('muhammedhamedelgaml', ${DOCKER_CRED_ID})
+                dockerPush('muhammedhamedelgaml', ${DOCKER_CRED_ID} )
             }
         }
 
