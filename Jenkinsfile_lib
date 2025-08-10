@@ -30,8 +30,10 @@ node {
         
         stage("Docker Push") {
             def docker = new com.iti.docker()
-            docker.login("muhammedhamedelgaml", DOCKER_CRED_ID)
-            docker.push(IMAGE_NAME, IMAGE_TAG)
+                script {
+                    dockerLogin('muhammedhamedelgaml')
+                }       
+                docker.push(IMAGE_NAME, IMAGE_TAG)
         }
   
 }
