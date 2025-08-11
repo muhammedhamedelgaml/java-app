@@ -30,7 +30,8 @@ node {
 
         stage('Docker login') {
             steps {
-                docker('muhammedhamedelgaml', DOCKER_CRED_ID )
+                def docker = new com.iti.docker()
+                docker.login('muhammedhamedelgaml', DOCKER_CRED_ID )
             }
         }
 
