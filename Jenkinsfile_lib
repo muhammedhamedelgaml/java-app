@@ -39,23 +39,23 @@ node {
 //     docker.push(IMAGE_NAME, IMAGE_TAG)
 //  }
 
-stage("Update ArgoCD Deployment") {
-    withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-        sh "git fetch origin master"
-        sh "git checkout master"
-        sh "git reset --hard origin/master"
+// stage("Update ArgoCD Deployment") {
+//     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+//         sh "git fetch origin master"
+//         sh "git checkout master"
+//         sh "git reset --hard origin/master"
 
-        sh "sed -i 's|image: muhammedhamed/java:v.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' argocd/deployment.yml"
+//         sh "sed -i 's|image: muhammedhamed/java:v.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' argocd/deployment.yml"
         
-        sh "git config user.email 'jenkins@example.com'"
-        sh "git config user.name 'Jenkins CI'"
+//         sh "git config user.email 'jenkins@example.com'"
+//         sh "git config user.name 'Jenkins CI'"
 
-        sh "git add argocd/deployment.yml"
-        sh "git commit -m 'Update image tag to ${IMAGE_TAG} - Build #${BUILD_NUMBER}' || echo 'No changes to commit'"
+//         sh "git add argocd/deployment.yml"
+//         sh "git commit -m 'Update image tag to ${IMAGE_TAG} - Build #${BUILD_NUMBER}' || echo 'No changes to commit'"
 
-        sh "git push https://${GITHUB_TOKEN}@github.com/muhammedhamedelgaml/java-app.git HEAD:master"
-    }
-}
+//         sh "git push https://${GITHUB_TOKEN}@github.com/muhammedhamedelgaml/java-app.git HEAD:master"
+//     }
+// }
 
 
 
