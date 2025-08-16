@@ -3,7 +3,7 @@
 node {
     def IMAGE_NAME = 'muhammedhamedelgaml/iti-java'
     def IMAGE_TAG = "v${BUILD_NUMBER}"
-    def DOCKER_CRED_ID = 'dockerhub-pass'
+    def DOCKER_CRED_ID = credentials('dockerhub-pass')
 
     def mavenHome = tool name: 'maven', type: 'maven'
     def javaHome = tool name: 'jdk', type: 'jdk'
@@ -31,7 +31,7 @@ node {
         stage('Docker login') {
             steps {
                 def docker = new com.iti.docker()
-                docker.login('muhammedhamedelgaml', DOCKER_CRED_ID )
+                docker.login( "muhammedhamedelgaml", "${DOCKER_CRED_ID}")
             }
         }
 
@@ -44,6 +44,12 @@ node {
     }
 
 }
+
+    // stage("push java app image"){
+    //     sh "cd argocd"
+    //     sh "sed -i #        image: muhammedhamed/java:v1#        image: iti-java:${BUILD_NUMBER}# iti-dev/deployment.yaml"
+    // }
+
 
   
 }
