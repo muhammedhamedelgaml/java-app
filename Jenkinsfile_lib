@@ -42,14 +42,14 @@ node {
 stage("Update ArgoCD Deployment") {
     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
         // Update deployment file
-        sh "cd argocd && sed -i 's|image: muhammedhamed/java:v.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' deployment.yaml"
+        sh "cd argocd && sed -i 's|image: muhammedhamed/java:v.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' deployment.yml"
         
         // Configure git user
         sh "git config user.email 'jenkins@example.com'"
         sh "git config user.name 'Jenkins CI'"
         
         // Add and commit changes
-        sh "git add argocd/deployment.yaml"
+        sh "git add argocd/deployment.yml"
         sh "git commit -m 'Update image tag to ${IMAGE_TAG} - Build #${BUILD_NUMBER}'"
         
         // Push using token authentication
