@@ -11,7 +11,7 @@ node {
     
     
         stage("Checkout") {
-        checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/muhammedhamedelgaml/java-app.git']])        }
+        checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/muhammedhamedelgaml/java-app.git']])   }
         
         stage("Build App") {
         env.JAVA_HOME = javaHome
@@ -29,33 +29,33 @@ node {
             docker.build(IMAGE_NAME, IMAGE_TAG)
         }
 
-  stage('Docker login') {
-    def docker = new com.iti.docker()
-    docker.login(USERNAME, DOCKER_CRED_ID)
- }
+//   stage('Docker login') {
+//     def docker = new com.iti.docker()
+//     docker.login(USERNAME, DOCKER_CRED_ID)
+//  }
 
- stage("Docker Push") {
-    def docker = new com.iti.docker()
-    docker.push(IMAGE_NAME, IMAGE_TAG)
- }
+//  stage("Docker Push") {
+//     def docker = new com.iti.docker()
+//     docker.push(IMAGE_NAME, IMAGE_TAG)
+//  }
 
-// stage("Update ArgoCD Deployment") {
-//     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-//         // Update deployment file
-//         sh "cd argocd && sed -i 's|image: muhammedhamed/java:v.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' deployment.yaml"
+stage("Update ArgoCD Deployment") {
+    withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+        // Update deployment file
+        sh "cd argocd && sed -i 's|image: muhammedhamed/java:v.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' deployment.yaml"
         
-//         // Configure git user
-//         sh "git config user.email 'jenkins@example.com'"
-//         sh "git config user.name 'Jenkins CI'"
+        // Configure git user
+        sh "git config user.email 'jenkins@example.com'"
+        sh "git config user.name 'Jenkins CI'"
         
-//         // Add and commit changes
-//         sh "git add argocd/iti-dev/deployment.yaml"
-//         sh "git commit -m 'Update image tag to ${IMAGE_TAG} - Build #${BUILD_NUMBER}'"
+        // Add and commit changes
+        sh "git add argocd/deployment.yaml"
+        sh "git commit -m 'Update image tag to ${IMAGE_TAG} - Build #${BUILD_NUMBER}'"
         
-//         // Push using token authentication
-//         sh "git push https://${GITHUB_TOKEN}@github.com/muhammedhamedelgaml/java-app.git master"
-//     }
-// }
+        // Push using token authentication
+        sh "git push https://${GITHUB_TOKEN}@github.com/muhammedhamedelgaml/java-app.git master"
+    }
+}
 
 
   
