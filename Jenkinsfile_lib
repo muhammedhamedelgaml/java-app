@@ -48,6 +48,8 @@ stage("Update ArgoCD Deployment") {
         sh "git config user.email 'jenkins@example.com'"
         sh "git config user.name 'Jenkins CI'"
         
+        sh "git checkout master"
+
         // Add and commit changes
         sh "git add argocd/deployment.yml"
         sh "git commit -m 'Update image tag to ${IMAGE_TAG} - Build #${BUILD_NUMBER}'"
