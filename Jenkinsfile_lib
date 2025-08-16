@@ -32,7 +32,8 @@ node {
             steps {
                 // def docker = new com.iti.docker()
                 // docker.login( "muhammedhamedelgaml", "${DOCKER_CRED_ID}")
-           sh "echo ${DOCKER_CRED_ID} | docker login -u "muhammedhamedelgaml" --password-stdin"
+        //    sh "echo ${DOCKER_CRED_ID} | docker login -u "muhammedhamedelgaml" --password-stdin"
+            sh "docker login -u muhammedhamedelgaml -p ${DOCKER_CRED_ID}"
 
             }
         }
