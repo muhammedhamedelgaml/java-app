@@ -41,8 +41,9 @@ node {
 
 stage("Update ArgoCD Deployment") {
     withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+        sh "git fetch origin master"
         sh "git checkout master"
-        sh "git pull origin master"
+        sh "git reset --hard origin/master"
 
         sh "sed -i 's|image: muhammedhamed/java:v.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' argocd/deployment.yml"
         
@@ -55,6 +56,7 @@ stage("Update ArgoCD Deployment") {
         sh "git push https://x-access-token:${GITHUB_TOKEN}@github.com/muhammedhamedelgaml/java-app.git HEAD:master"
     }
 }
+
 
 
 
