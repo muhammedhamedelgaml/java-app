@@ -1,6 +1,7 @@
 @Library('my-shared-lib@') _
 
 node {
+    def USERNAME = 'muhammedhamedelgaml'
     def IMAGE_NAME = 'muhammedhamedelgaml/iti-java'
     def IMAGE_TAG = "v${BUILD_NUMBER}"
     def DOCKER_CRED_ID = credentials('dockerhub-pass')
@@ -29,8 +30,8 @@ node {
         }
 
         stage('Docker login') {
-                           def docker = new com.iti.docker()
-                docker.login( "muhammedhamedelgaml", DOCKER_CRED_ID)
+                def docker = new com.iti.docker()
+                docker.login( USERNAME, DOCKER_CRED_ID)
 
 
             
